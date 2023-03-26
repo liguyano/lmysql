@@ -9,62 +9,33 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+using namespace std;
 int main() {
-
-    //同一台电脑测试，需要两个端口
-    int port_in  = 12321;
-    int port_out = 12322;
-    int sockfd;
-
-    // 创建socket
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if(-1==sockfd){
-        return false;
-        puts("Failed to create socket");
+    MYSQL mysql;
+    //1.初始化操作句柄
+    //MYSQL *     STDCALL mysql_init(MYSQL *mysql);
+    mysql_init(&mysql);
+    /*
+     * 操作句柄
+     * host ： 服务端所在机器的ip地址
+     * 数据库的用户名：
+     * 数据库的密码：
+     * 数据库名称
+     * 数据库端口
+     * unix_socket : AF_UNIX（进程间通信的方式）  AF_INET（网络套接字）
+     * clientflag : CLIENT_FOUND_ROWS
+     * */
+    if(!mysql_real_connect(&mysql,"43.136.94.231", "user01", "WWPdsg12", "dia", 3306, NULL, CLIENT_FOUND_ROWS))
+    {
+        //const char * STDCALL mysql_error(MYSQL *mysql);
+        cout << mysql_error(&mysql) << endl;
+        return -1;
     }
 
-    // 设置地址与端口
-    struct sockaddr_in addr;
-    socklen_t          addr_len=sizeof(addr);
-
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;       // Use IPV4
-    addr.sin_port   = htons(port_out);    //
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    // Time out
-    struct timeval tv;
-    tv.tv_sec  = 0;
-    tv.tv_usec = 200000;  // 200 ms
-    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(struct timeval));
-
-    // Bind 端口，用来接受之前设定的地址与端口发来的信息,作为接受一方必须bind端口，并且端口号与发送方一致
-    if (bind(sockfd, (struct sockaddr*)&addr, addr_len) == -1){
-        printf("Failed to bind socket on port %d\n", port_out);
-        close(sockfd);
-        return false;
-    }
-
-    char buffer[128];
-    memset(buffer, 0, 128);
-
-    int counter = 0;
-    while(1){
-        struct sockaddr_in src;
-        socklen_t src_len = sizeof(src);
-        memset(&src, 0, sizeof(src));
-
-        int sz = recvfrom(sockfd, buffer, 128, 0, (sockaddr*)&src, &src_len);
-        if (sz > 0){
-            buffer[sz] = 0;
-            printf("Get Message %d: %s\n", counter++, buffer);
-        }
-        else{
-            puts("timeout");
-        }
-    }
-
-    close(sockfd);
+    const char* sql = "INSERT INTO `dia`.`agriculture` (`temperature`, `humidity`, `data`) VALUES (12.5, 222.2, '2023-03-26')";
+    mysql_query(&mysql, sql);
+    mysql_close(&mysql);
     return 0;
+
 
 }
