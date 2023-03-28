@@ -22,5 +22,6 @@ int main() {
     for (auto item:re) {
         lnprint(item[2]);
     }
+    lnprint("end");
     return 0;
 }
