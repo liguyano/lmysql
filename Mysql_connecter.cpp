@@ -13,9 +13,8 @@ Mysql_connecter::Mysql_connecter() {
     {
         //const char * STDCALL mysql_error(MYSQL *mysql);
         std::cout << mysql_error(mysql) << std::endl;
-        return;
+        throw mysql_errno(mysql);
     }
-    lnprint("init succed");
 }
 
 std::vector<char **> Mysql_connecter::select(std::string sql) {

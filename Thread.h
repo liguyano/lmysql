@@ -6,6 +6,7 @@
 #define NETWORK_THREAD_H
 #include <thread>
 #include <iostream>
+#include <fstream>
 #include "string"
 #include "Mysql_connecter.h"
 #include "Tcp_handle.h"

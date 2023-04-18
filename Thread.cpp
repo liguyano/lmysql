@@ -3,7 +3,7 @@
 //
 
 #include "Thread.h"
-
+static  time_t timer = time(NULL);
 void Thread::command(std::string comm,Mysql_connecter& mysql) {
 
     auto co=String::spilt(comm,'+');
@@ -43,16 +43,41 @@ std::vector<std::string> String::spilt(std::string o, char oi) {
 
 void* Thread::socket_thread(Socket *so ) {
     std::string s;
+    std::ofstream messgaeLog;
+    messgaeLog.open("message.txt",std::ios::app);
     while (true)
     {
         s=so->recv_data();
-        so->send_data("recvd;");
+        messgaeLog<< std::string(ctime(&timer)).substr(0,24) A ":  ";
+        messgaeLog<< so->getIp()<<":" A so->getPort() A " ";
+        messgaeLog<< s END;
+        if (s=="close")
+        {
+            timer= time(NULL);
+            pr std::string(ctime(&timer)).substr(0,24) A ":  ";
+            pr so->getIp() A ":" A so->getPort() A "  close manually" END;
+            delete so;
+            break;
+        }else
+        {
+            so->send_data("recvd;");
         so->sv.push_back(s);
+        }
     }
+    timer= time(NULL);
+    pr std::string(ctime(&timer)).substr(0,24) A ":  ";
+    lnprint("socket_thread quit");
 }
 
 void *Thread::commandThread(strVector* s) {
+
+    timer=time(NULL);
+    pr std::string(ctime(&timer)).substr(0,24) A ":  ";
+    lnprint("gonna to start mysql connecter");
     Mysql_connecter connecter;
+    timer= time(NULL);
+    pr std::string(ctime(&timer)).substr(0,24) A ":  ";
+    lnprint("mysql connector init succed");
     while (1)
     {
         while (s->size()>0) {

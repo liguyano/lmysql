@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+#include<time.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/shm.h>
@@ -35,11 +36,10 @@ private:
     std::string ip="0.0.0.0";
     int port=0;
 public:
-    int getPort() const;
-
+    [[nodiscard]] int getPort() const;
 public:
-    const std::string &getIp() const;
-
+    [[nodiscard]] const std::string &getIp() const;
+    char* buff;
 public:
     strVector& sv;
     ~Socket();

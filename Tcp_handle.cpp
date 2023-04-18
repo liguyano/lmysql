@@ -35,6 +35,7 @@ Tcp_handle::Tcp_handle(int port) {
 int Tcp_handle::listen() {
     int connfd;
     if( ::listen(listenfd,10) == -1) {
+
         printf(" listen socket error: %s (errno :%d)\n",strerror(errno),errno);
        // return -1;
     }
@@ -50,11 +51,11 @@ Tcp_handle::~Tcp_handle() {
 }
 
 Socket::Socket(int id,strVector& sv) : id(id),sv(sv) {
+    buff=new char[1024];
     auto saddr=new sockaddr_in;
     auto st =new socklen_t ;
     *st= sizeof(*saddr);
     getpeername(id,(sockaddr*)saddr,st);
-
     ip=inet_ntoa(saddr->sin_addr);
     port=ntohs(saddr->sin_port);
     delete saddr;
@@ -68,15 +69,13 @@ int Socket::send_data(const std::string& message) const {
 
 Socket::~Socket() {
     close(id);
+    delete[] buff;
 }
 
 std::string Socket::recv_data() const {
-    auto buff=new char[1024];
     auto size=recv(id,buff,1024,0);
-
     buff[size]='\0';
     std::string result(buff);
-    delete[] buff;
     return result;
 }
 
