@@ -4,7 +4,7 @@
 
 #ifndef NETWORK_THREAD_H
 #define NETWORK_THREAD_H
-#include <pthread.h>
+#include <thread>
 #include <iostream>
 #include "string"
 #include "Mysql_connecter.h"
@@ -16,8 +16,8 @@ namespace String{
 }
 namespace Thread{
     void command(std::string comm,Mysql_connecter& mysql);
-    void* commandThread(void * s);
-    void* socket_thread(void* so);
+    void* commandThread(strVector* s);
+    void* socket_thread(Socket * so);
 }
 
 

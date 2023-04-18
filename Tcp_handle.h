@@ -32,6 +32,14 @@ public:
 class Socket{
 private:
     const int id;
+    std::string ip="0.0.0.0";
+    int port=0;
+public:
+    int getPort() const;
+
+public:
+    const std::string &getIp() const;
+
 public:
     strVector& sv;
     ~Socket();

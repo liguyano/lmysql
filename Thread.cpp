@@ -41,23 +41,25 @@ std::vector<std::string> String::spilt(std::string o, char oi) {
     return result;
 }
 
-void* Thread::socket_thread(void *so ) {
+void* Thread::socket_thread(Socket *so ) {
     std::string s;
-    auto os=(Socket*) so;
     while (true)
     {
-        s=os->recv_data();
-        os->sv.push_back(s);
+        s=so->recv_data();
+        so->send_data("recvd;");
+        so->sv.push_back(s);
     }
-
 }
 
-void *Thread::commandThread(void *s) {
+void *Thread::commandThread(strVector* s) {
     Mysql_connecter connecter;
-    auto strv=(strVector*) s;
-    while (strv->size()>0) {
-        auto a=strv->at(0);
-        command(a,connecter);
-        strv->erase(strv->begin());
+    while (1)
+    {
+        while (s->size()>0) {
+            auto a=s->at(0);
+            //lnprint(a);
+            command(a,connecter);
+            s->erase(s->begin());
+        }
     }
 }

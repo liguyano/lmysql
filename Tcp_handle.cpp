@@ -30,7 +30,6 @@ Tcp_handle::Tcp_handle(int port) {
     if ( bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) == -1) {
         printf(" bind socket error: %s (errno :%d)\n",strerror(errno),errno);
     }
-
 }
 
 int Tcp_handle::listen() {
@@ -51,6 +50,15 @@ Tcp_handle::~Tcp_handle() {
 }
 
 Socket::Socket(int id,strVector& sv) : id(id),sv(sv) {
+    auto saddr=new sockaddr_in;
+    auto st =new socklen_t ;
+    *st= sizeof(*saddr);
+    getpeername(id,(sockaddr*)saddr,st);
+
+    ip=inet_ntoa(saddr->sin_addr);
+    port=ntohs(saddr->sin_port);
+    delete saddr;
+    delete st;
 
 }
 
@@ -65,9 +73,18 @@ Socket::~Socket() {
 std::string Socket::recv_data() const {
     auto buff=new char[1024];
     auto size=recv(id,buff,1024,0);
+
     buff[size]='\0';
     std::string result(buff);
     delete[] buff;
     return result;
+}
+
+const std::string &Socket::getIp() const {
+    return ip;
+}
+
+int Socket::getPort() const {
+    return port;
 }
 
